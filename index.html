@@ -4,157 +4,235 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ミックスリスト</title>
-<meta name="theme-color" content="#16131f">
+<meta name="theme-color" content="#1b3a28">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#16131f;--card:#221e2e;--card2:#2c2740;--line:#3a3450;--tx:#f2eff8;--sub:#a59fb8;--ac:#ff5c8a;--ac2:#7c5cff;--ok:#3ddc84;--warn:#ffb347}
+:root{--bg:#121212;--el:#181818;--el2:#1f1f1f;--el3:#2a2a2a;--hi:#3e3e3e;--tx:#fff;--sub:#b3b3b3;--mut:#727272;--g:#1ed760;--g2:#1db954}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
-body{padding:0 16px calc(90px + env(safe-area-inset-bottom))}
-.wrap{max-width:560px;margin:0 auto}
-header{display:flex;align-items:center;gap:8px;padding:14px 0 6px}
-h1{font-size:20px;margin:0;flex:1;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
-.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--card2);color:var(--sub);border:1px solid var(--line);cursor:pointer;white-space:nowrap}
-.pill.on{color:var(--ok);border-color:#2f6b4c}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
-.card h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
-.card h2 small{font-weight:400;color:var(--sub);font-size:12px}
-button{font:inherit;color:inherit;border:0;cursor:pointer}
-.btn{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-weight:600}
-.btn:active{transform:scale(.97)}
-.btn.pri{background:linear-gradient(90deg,var(--ac),var(--ac2));border:0;color:#fff}
-.btn.big{width:100%;padding:15px;font-size:17px;border-radius:14px}
-.btn:disabled{opacity:.45;cursor:default;transform:none}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.row>.grow{flex:1;min-width:0}
-input[type=text],input[type=search],input[type=tel]{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;outline:none}
-input:focus{border-color:var(--ac2)}
-.sub{color:var(--sub);font-size:13px}
-.code{font-size:30px;font-weight:800;letter-spacing:.15em}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:3px 4px 3px 3px;font-size:13px;max-width:100%}
-.chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#000}
-.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--sub);font-weight:400;cursor:pointer}
-.chip.person{padding:4px 10px}
-.dot{width:9px;height:9px;border-radius:50%;flex:none}
-.res{margin-top:8px;display:flex;flex-direction:column;gap:2px;max-height:320px;overflow:auto}
-.ritem{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer}
-.ritem:hover,.ritem:active{background:var(--card2)}
-.ritem img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#000}
-.ritem .nm{flex:1;min-width:0}
-.ritem .nm div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ritem .add{color:var(--ac);font-weight:700;font-size:13px}
-.ritem.got .add{color:var(--ok)}
-.person-block{margin-top:10px}
-.person-block .who{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.seg{display:flex;flex-wrap:wrap;gap:6px}
-.seg button{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
-.seg button.on{background:var(--card2);border-color:var(--ac);color:#fff;font-weight:700}
-.lbl{font-size:13px;color:var(--sub);margin:12px 0 6px}
-.lbl:first-of-type{margin-top:0}
-.stepper{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
-.stepper button{width:34px;height:34px;border-radius:9px;background:var(--card2);font-size:18px}
-.stepper span{min-width:44px;text-align:center;font-weight:700}
-.tracks{margin-top:8px}
-.tr{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #2a2538}
-.tr:last-child{border-bottom:0}
-.tr .no{width:22px;text-align:right;color:var(--sub);font-size:12px;flex:none}
-.tr .bar{width:4px;align-self:stretch;border-radius:2px;flex:none}
-.tr img{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#000;flex:none}
-.tr .nm{flex:1;min-width:0}
-.tr .nm div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tr .nm .a{font-size:12px;color:var(--sub)}
-.ib{width:34px;height:34px;border-radius:50%;background:var(--card2);display:grid;place-items:center;flex:none;font-size:13px;color:var(--sub)}
-.ib.play.on{background:var(--ac);color:#fff}
-.ib svg{width:14px;height:14px;fill:currentColor}
-.badge{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--bg);color:var(--sub);margin-left:4px}
-.saved a{color:var(--ok)}
-#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;z-index:20;text-align:center}
-#toast.show{opacity:1}
-.banner{background:#3b2a12;border:1px solid #6b4a1a;color:#ffd79a;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px}
-.prog{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
-.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));width:0;transition:width .2s}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+svg{display:block}
 .hide{display:none!important}
-.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:16px;z-index:30}
-.modal .card{max-width:440px;width:100%}
-.note{font-size:12px;color:var(--sub);margin-top:8px}
-.empty{color:var(--sub);font-size:13px;padding:6px 0}
+
+/* ヘッダー */
+.top{background:linear-gradient(180deg,#1b3a28 0%,#15241b 55%,var(--bg) 100%);padding-top:env(safe-area-inset-top)}
+.hd{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:19px;letter-spacing:-.02em}
+.brand svg{width:26px;height:26px}
+.acct{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 4px;border-radius:99px;background:#000a;font-size:13px;font-weight:700;color:var(--sub)}
+.acct i{width:24px;height:24px;border-radius:50%;background:var(--el3);display:grid;place-items:center}
+.acct i svg{width:14px;height:14px;fill:var(--sub)}
+.acct.on{color:var(--tx)}
+.acct.on i{background:var(--g2)}
+.acct.on i svg{fill:#000}
+
+section{padding:18px 0 6px}
+h2{font-size:22px;font-weight:900;letter-spacing:-.02em;margin:0 0 14px}
+.lab{font-size:13px;font-weight:700;color:var(--sub);margin:18px 0 8px}
+h2+.lab{margin-top:0}
+
+/* 検索 */
+.search{display:flex;align-items:center;gap:10px;background:#fff;color:#000;border-radius:99px;height:46px;padding:0 16px}
+.search svg{width:20px;height:20px;flex:none;fill:#121212}
+.search input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:16px;color:#000}
+.search input::placeholder{color:#555}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.res{margin-top:6px}
+.ritem{display:flex;align-items:center;gap:12px;padding:8px 6px;margin:0 -6px;border-radius:6px;cursor:pointer}
+.ritem:hover{background:var(--el3)}
+.ritem img{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--el3);flex:none}
+.ritem .nm{flex:1;min-width:0}
+.ritem .nm b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ritem .nm small{font-size:13px;color:var(--sub)}
+.ritem .add{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--mut);display:grid;place-items:center;flex:none}
+.ritem .add svg{width:14px;height:14px;fill:var(--sub)}
+.ritem.got .add{background:var(--g);border-color:var(--g)}
+.ritem.got .add svg{fill:#000}
+.empty{color:var(--sub);font-size:14px;padding:10px 0}
+
+/* 選んだアーティスト */
+.picks{display:flex;gap:14px;overflow-x:auto;padding:14px 2px 6px;margin:0 -2px;scrollbar-width:none}
+.picks::-webkit-scrollbar{display:none}
+.pk{width:84px;flex:none;text-align:center;position:relative}
+.pk img{width:84px;height:84px;border-radius:50%;object-fit:cover;background:var(--el3);box-shadow:0 6px 18px #0008;display:block}
+.pk span{display:block;font-size:12px;font-weight:700;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk b{position:absolute;top:0;right:0;width:24px;height:24px;border-radius:50%;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 6px #0008}
+.pk b svg{width:10px;height:10px;fill:#000}
+.picks .empty{padding:2px 0}
+
+/* 設定 */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{height:34px;padding:0 14px;border-radius:99px;background:var(--el3);font-size:14px;font-weight:500}
+.chips button:hover{background:var(--hi)}
+.chips button.on{background:var(--g);color:#000;font-weight:700}
+.note{font-size:13px;color:var(--sub);margin:8px 0 0}
+.stepper{display:inline-flex;align-items:center;background:var(--el3);border-radius:99px;height:38px}
+.stepper button{width:40px;height:38px;border-radius:99px;font-size:20px;color:var(--sub)}
+.stepper button:hover{color:var(--tx)}
+.stepper span{min-width:52px;text-align:center;font-weight:700}
+
+.gen{display:block;width:100%;height:52px;margin-top:24px;border-radius:99px;background:var(--g);color:#000;font-size:16px;font-weight:900;letter-spacing:.02em}
+.gen:hover{background:#3be477}
+.gen:active{transform:scale(.98)}
+.gen:disabled{background:var(--el3);color:var(--mut);transform:none;cursor:default}
+.prog{height:4px;background:var(--hi);border-radius:2px;overflow:hidden;margin-top:12px}
+.prog i{display:block;height:100%;background:var(--g);width:0;transition:width .2s}
+
+/* プレイリスト */
+#resultCard{margin-top:16px;padding-top:0}
+.plhead{display:flex;gap:16px;align-items:flex-end;padding:22px 16px 18px;margin:0 -16px;background:linear-gradient(180deg,#2c4a37 0%,var(--bg) 100%)}
+.cover{width:132px;height:132px;flex:none;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 8px 24px #000a;background:var(--el3);overflow:hidden;border-radius:4px}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cover.one{grid-template-columns:1fr}
+.plmeta{flex:1;min-width:0}
+.kicker{font-size:12px;font-weight:700}
+.pltitle{width:100%;background:none;border:0;border-bottom:1px solid transparent;color:var(--tx);font:inherit;font-size:24px;font-weight:900;letter-spacing:-.02em;padding:2px 0;outline:0}
+.pltitle:focus{border-bottom-color:var(--mut)}
+.meta{font-size:13px;color:var(--sub)}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
+.save{display:block;width:100%;height:48px;margin-top:10px;border-radius:99px;font-size:15px;background:var(--g);color:#000;font-weight:900}
+.save:hover{background:#3be477}
+.save:disabled{background:var(--el3);color:var(--mut)}
+.pillb{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--mut);font-size:13px;font-weight:700}
+.pillb:hover{border-color:#fff}
+.pillb svg{width:16px;height:16px;fill:currentColor}
+.switch{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--sub);cursor:pointer;margin:4px 0 6px;user-select:none}
+.switch input{display:none}
+.switch .sw{width:36px;height:20px;border-radius:99px;background:var(--mut);position:relative;transition:background .15s;flex:none}
+.switch .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#000;transition:left .15s}
+.switch input:checked+.sw{background:var(--g)}
+.switch input:checked+.sw::after{left:18px}
+.msg{font-size:13px;color:var(--sub);margin-top:6px}
+.msg a,.savedl a{color:var(--g);font-weight:700;text-decoration:none}
+.savedl{font-size:13px;color:var(--sub);margin-top:4px}
+
+.tracks{margin-top:10px}
+.tr{display:flex;align-items:center;gap:12px;padding:7px 6px;margin:0 -6px;border-radius:6px;cursor:pointer}
+.tr:hover{background:var(--el3)}
+.tr .no{width:20px;display:flex;justify-content:center;color:var(--sub);font-size:14px;flex:none;font-variant-numeric:tabular-nums}
+.tr img{width:46px;height:46px;border-radius:3px;object-fit:cover;background:var(--el3);flex:none}
+.tr .nm{flex:1;min-width:0}
+.tr .nm b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .nm small{display:block;font-size:13px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .du{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums;flex:none}
+.tr .rm{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;flex:none;opacity:.7}
+.tr .rm:hover{opacity:1;background:var(--hi)}
+.tr .rm svg{width:12px;height:12px;fill:var(--sub)}
+.tr.on .nm b{color:var(--g)}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:14px}
+.eq i{width:3px;background:var(--g);animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+
+/* ミニプレイヤー */
+.mini{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));max-width:604px;margin:0 auto;background:#1f3a29;border-radius:8px;display:flex;align-items:center;gap:10px;padding:8px;box-shadow:0 8px 24px #000c;z-index:10;overflow:hidden}
+.mini img{width:42px;height:42px;border-radius:4px;object-fit:cover;flex:none;background:#000}
+.mini .nm{flex:1;min-width:0}
+.mini .nm b{display:block;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini .nm small{display:block;font-size:12px;color:#cfd8d2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini button{width:38px;height:38px;display:grid;place-items:center;flex:none}
+.mini button svg{width:22px;height:22px;fill:#fff}
+.mini .pb{position:absolute;left:8px;right:8px;bottom:2px;height:2px;background:#ffffff40;border-radius:1px}
+.mini .pb i{display:block;height:100%;width:0;background:#fff;border-radius:1px}
+.mini .tag{font-size:10px;color:#cfd8d2;border:1px solid #cfd8d280;border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:1px}
+
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#000;font-weight:500;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;z-index:20;text-align:center;box-shadow:0 8px 24px #0009}
+#toast.show{opacity:1}
+.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:16px;z-index:30}
+.box{background:var(--el2);border-radius:10px;padding:20px;max-width:440px;width:100%}
+.box h3{margin:0 0 8px;font-size:18px}
+.box input{width:100%;margin-top:12px;height:42px;border-radius:6px;border:1px solid var(--hi);background:var(--el3);color:var(--tx);padding:0 12px;font:inherit}
+.box .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.box .row button{height:38px;padding:0 18px;border-radius:99px;font-weight:700}
+.box .ok{background:var(--g);color:#000}
+.box .note b{color:var(--tx);word-break:break-all}
+.done{max-width:420px;margin:80px auto;text-align:center;padding:0 16px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>ミックスリスト</h1>
-    <span class="pill" id="authPill">Spotify未ログイン</span>
-  </header>
-
-  <!-- アーティスト -->
-  <div class="card">
-    <h2>アーティストを選ぶ</h2>
-    <input type="search" id="q" placeholder="アーティスト名で検索" autocomplete="off">
-    <div class="res" id="results"></div>
-    <div class="person-block">
-      <div class="who"><span class="dot" id="myDot"></span>選んだアーティスト</div>
-      <div class="chips" id="myPicks"></div>
-    </div>
-    <div id="others"></div>
+<header class="top">
+  <div class="wrap hd">
+    <div class="brand"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="#1ed760"/><rect x="7" y="11" width="2.6" height="8" rx="1.3" fill="#000"/><rect x="11.7" y="7" width="2.6" height="12" rx="1.3" fill="#000"/><rect x="16.4" y="9.5" width="2.6" height="9.5" rx="1.3" fill="#000"/></svg>ミックスリスト</div>
+    <button class="acct" id="authPill"><i><svg viewBox="0 0 16 16"><path d="M8 8a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 8 8zm0 1.4c-3 0-6 1.5-6 3.6V15h12v-2c0-2.1-3-3.6-6-3.6z"/></svg></i><span id="authTx">ログイン</span></button>
   </div>
+  <div class="wrap">
+    <section style="padding-top:8px">
+      <h2>アーティストを選ぶ</h2>
+      <label class="search"><svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.8 4.8-1.4 1.4-4.8-4.8A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"/></svg><input type="search" id="q" placeholder="アーティスト名で検索" autocomplete="off" enterkeyhint="search"></label>
+      <div class="res" id="results"></div>
+      <div class="picks" id="myPicks"></div>
+    </section>
+  </div>
+</header>
 
-  <!-- 設定 -->
-  <div class="card">
+<main class="wrap">
+  <section>
     <h2>選び方</h2>
-    <div class="lbl">1アーティストあたりの曲数</div>
-    <div class="stepper"><button id="nMinus">−</button><span id="nVal">3曲</span><button id="nPlus">＋</button></div>
-    <div class="lbl">曲の選び方</div>
-    <div class="seg" id="modeSeg">
+    <div class="lab">1アーティストあたりの曲数</div>
+    <div class="stepper"><button id="nMinus" aria-label="減らす">−</button><span id="nVal">3曲</span><button id="nPlus" aria-label="増やす">＋</button></div>
+    <div class="lab">曲の選び方</div>
+    <div class="chips" id="modeSeg">
       <button data-v="top">人気TOP</button>
       <button data-v="toprand">人気曲からランダム</button>
       <button data-v="rand">全曲からランダム</button>
-      <button data-v="mix">人気＋ランダム半々</button>
+      <button data-v="mix">人気＋ランダム</button>
     </div>
-    <div class="note" id="modeNote"></div>
-    <div class="lbl">並べ方</div>
-    <div class="seg" id="orderSeg">
+    <p class="note" id="modeNote"></p>
+    <div class="lab">並び順</div>
+    <div class="chips" id="orderSeg">
       <button data-v="shuffle">シャッフル</button>
-      <button data-v="turn">みんな順番に</button>
+      <button data-v="turn">アーティストを交互に</button>
       <button data-v="artist">アーティストごと</button>
     </div>
-  </div>
+    <button class="gen" id="btnGen">プレイリストを作る</button>
+    <div class="prog hide" id="genProg"><i></i></div>
+  </section>
 
-  <button class="btn pri big" id="btnGen">プレイリストを作る</button>
-  <div class="prog hide" id="genProg"><i></i></div>
-
-  <!-- 結果 -->
-  <div class="card hide" id="resultCard">
-    <h2>できたプレイリスト <small id="listInfo"></small></h2>
-    <input type="text" id="plTitle" maxlength="60" placeholder="プレイリストの名前">
-    <div class="row" style="margin-top:8px">
-      <button class="btn" id="btnShuf">並べ直す</button>
-      <button class="btn" id="btnRegen">選び直す</button>
+  <section class="hide" id="resultCard">
+    <div class="plhead">
+      <div class="cover" id="cover"></div>
+      <div class="plmeta">
+        <div class="kicker">プレイリスト</div>
+        <input type="text" id="plTitle" class="pltitle" maxlength="60" placeholder="名前をつける">
+        <div class="meta" id="listInfo"></div>
+      </div>
     </div>
-    <div class="tracks" id="tracks"></div>
-    <label class="sub" style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer"><input type="checkbox" id="plPub" style="width:18px;height:18px;accent-color:var(--ac)">公開プレイリストにする（友達がリンクから開ける）</label>
-    <div class="row" style="margin-top:8px">
-      <button class="btn pri grow" id="btnSave">Spotifyに保存</button>
-      <button class="btn" id="btnCopy">曲リストをコピー</button>
+    <div class="actions">
+      <button class="pillb" id="btnShuf"><svg viewBox="0 0 16 16"><path d="M11.5 2.5 14 5l-2.5 2.5V5.8h-1.2c-.8 0-1.3.4-1.8 1l-3.4 4.6c-.7.9-1.6 1.6-3 1.6H1v-1.4h1.1c.8 0 1.3-.4 1.8-1L7.3 6c.7-.9 1.6-1.6 3-1.6h1.2zM1 3.6h1.1c1.4 0 2.3.7 3 1.6l.5.7-.9 1.2-.7-1c-.5-.6-1-1-1.8-1H1zm9.5 6.2.9-.1V8.5L14 11l-2.5 2.5v-1.3h-1.2c-1.4 0-2.3-.7-3-1.6l-.5-.6.9-1.2.7.9c.5.7 1 1.1 1.9 1.1z"/></svg>並べ直す</button>
+      <button class="pillb" id="btnRegen"><svg viewBox="0 0 16 16"><path d="M8 2.5a5.5 5.5 0 0 1 5 3.2V3.5h1.5v5h-5V7h2.6A4 4 0 1 0 12 9.6l1.4.5A5.5 5.5 0 1 1 8 2.5z"/></svg>選び直す</button>
+      <button class="pillb" id="btnCopy"><svg viewBox="0 0 16 16"><path d="M5 1.5h8A1.5 1.5 0 0 1 14.5 3v9H13V3H5zM2.5 4.5h8A1.5 1.5 0 0 1 12 6v7.5a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 1 13.5V6a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v7.5h8V6z"/></svg>コピー</button>
     </div>
+    <label class="switch"><input type="checkbox" id="plPub"><span class="sw"></span>公開プレイリストにする（リンクで友達も聴ける）</label>
+    <button class="save" id="btnSave">Spotifyに保存</button>
     <div class="prog hide" id="saveProg"><i></i></div>
-    <div class="sub" id="saveMsg" style="margin-top:6px"></div>
-    <div class="saved" id="savedList"></div>
-  </div>
+    <div class="msg" id="saveMsg"></div>
+    <div id="savedList"></div>
+    <div class="tracks" id="tracks"></div>
+  </section>
+</main>
+
+<div class="mini hide" id="mini">
+  <img id="miniImg" alt="">
+  <div class="nm"><b id="miniT"></b><small><span id="miniA"></span><span class="tag">試聴</span></small></div>
+  <button id="miniBtn" aria-label="再生・停止"></button>
+  <div class="pb"><i id="miniBar"></i></div>
 </div>
 
 <div id="toast"></div>
 
 <div class="modal hide" id="cidModal">
-  <div class="card">
-    <h2>Spotify連携の設定</h2>
-    <div class="sub">Spotify Developer Dashboard で作ったアプリの Client ID を入れてください（この端末に保存されます）。</div>
-    <input type="text" id="cidInput" placeholder="Client ID" style="margin-top:10px">
-    <div class="note">Redirect URI に登録するアドレス：<br><b id="cidRedir"></b></div>
-    <div class="row" style="margin-top:12px;justify-content:flex-end">
-      <button class="btn" id="cidCancel">やめる</button>
-      <button class="btn pri" id="cidOk">保存</button>
+  <div class="box">
+    <h3>Spotify連携の設定</h3>
+    <div class="note">Spotify Developer Dashboard で作ったアプリの Client ID を入れてください（この端末に保存されます）。</div>
+    <input type="text" id="cidInput" placeholder="Client ID">
+    <div class="note" style="margin-top:10px">Redirect URI に登録するアドレス：<br><b id="cidRedir"></b></div>
+    <div class="row">
+      <button id="cidCancel">やめる</button>
+      <button class="ok" id="cidOk">保存</button>
     </div>
   </div>
 </div>
@@ -223,7 +301,7 @@ function dzc(path) { if (!dzCache.has(path)) dzCache.set(path, dz(path).catch(e 
 function mkTrack(t, album, pick, by) {
   const al = album || t.album || {};
   return { u: rid(6), id: t.id, t: t.title, a: (t.artist && t.artist.name) || pick.name, aid: pick.id,
-    img: al.cover_small || al.cover_medium || pick.img || '', pv: t.preview || '', isrc: t.isrc || '', by, dur: t.duration || 0 };
+    img: al.cover_medium || al.cover_small || pick.img || '', pv: t.preview || '', isrc: t.isrc || '', by, dur: t.duration || 0 };
 }
 const byArtist = (t, aid) => (t.artist && t.artist.id === aid) || (t.contributors || []).some(c => c.id === aid);
 function goodList(list, aid) {
@@ -397,7 +475,7 @@ async function generate(from) {
     const res = groups.map(([pid, p]) => [pid, p.artists.map(a => [a.id, (got.get(a.id) || []).filter(t => t.by === pid)])]);
     const list = orderTracks(res, order);
     if (!list.length) throw new Error('empty');
-    S.list = list;
+    S.list = list; S.saved = [];
     if (!S.title) S.title = defaultTitle();
     const miss = [...got.values()].filter(ts => !ts.length);
     if (miss.length) toast(`${miss.length}組のアーティストの曲が見つかりませんでした`);
@@ -463,7 +541,7 @@ async function handleCallback() {
     } catch (e) { msg = 'ログインに失敗しました：' + e.message; }
   }
   if (popup) {
-    document.body.innerHTML = `<div class="wrap"><div class="card" style="margin-top:40px;text-align:center"><h2 style="justify-content:center">${ok ? 'ログインできました！' : esc(msg)}</h2><div class="sub">このタブを閉じて、元の画面に戻ってください。</div></div></div>`;
+    document.body.innerHTML = `<div class="done"><h2>${ok ? 'ログインできました' : esc(msg)}</h2><p class="note">このタブを閉じて、元の画面に戻ってください。</p></div>`;
     setTimeout(() => window.close(), 800);
     return true;
   }
@@ -545,7 +623,7 @@ async function saveToSpotify() {
     bar.style.width = '100%';
     const url = (pl.external_urls && pl.external_urls.spotify) || `https://open.spotify.com/playlist/${pl.id}`;
     const miss = list.length - found.length;
-    msg.innerHTML = `保存しました（${found.length}曲${miss ? `・見つからなかった曲 ${miss}` : ''}） <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--ok)">Spotifyで開く</a>`;
+    msg.textContent = miss ? `Spotifyで見つからなかった曲が${miss}曲ありました` : '';
     act({ t: 'saved', by: '', url, n: found.length, pub });
   } catch (e) {
     if (e.status === 401) { msg.textContent = 'ログインし直してね'; setTok(null); renderAuth(); }
@@ -580,11 +658,12 @@ async function mockSpotify(path, init) {
 }
 
 // ===== 試聴 =====
-const audio = new Audio(); let playingU = '';
+const audio = new Audio(); let playingU = '', miniU = '';
 audio.onended = () => { playingU = ''; renderTracks(); };
 async function togglePlay(tr) {
   if (playingU === tr.u) { audio.pause(); playingU = ''; renderTracks(); return; }
-  playingU = tr.u; renderTracks();
+  if (miniU === tr.u && audio.currentTime > 0 && !audio.ended) { playingU = tr.u; renderTracks(); audio.play().catch(() => {}); return; }
+  playingU = tr.u; miniU = tr.u; renderTracks();
   const tryPlay = async src => { audio.src = src; await audio.play(); };
   try { if (!tr.pv) throw 0; await tryPlay(tr.pv); }
   catch (e) {
@@ -597,21 +676,24 @@ async function togglePlay(tr) {
 function render() {
   renderPicks(); renderSettings(); renderGen(); renderResult();
 }
+const IC = {
+  x: '<svg viewBox="0 0 10 10"><path d="M1.6.2 5 3.6 8.4.2l1.4 1.4L6.4 5l3.4 3.4-1.4 1.4L5 6.4 1.6 9.8.2 8.4 3.6 5 .2 1.6z"/></svg>',
+  plus: '<svg viewBox="0 0 14 14"><path d="M6 0h2v6h6v2H8v6H6V8H0V6h6z"/></svg>',
+  check: '<svg viewBox="0 0 14 14"><path d="M5.2 9.6 12 2.8l1.4 1.4-8.2 8.2L.6 7.8 2 6.4z"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>'
+};
 function renderAuth() {
   const p = $('#authPill'), t = getTok();
-  p.textContent = t ? (MOCK ? 'Spotify（テスト）' : 'Spotifyログイン中') : 'Spotify未ログイン';
+  $('#authTx').textContent = t ? (MOCK ? 'テスト中' : 'ログイン中') : 'ログイン';
+  p.title = t ? 'Spotifyからログアウト' : 'Spotifyにログイン';
   p.classList.toggle('on', !!t);
 }
 function renderPicks() {
-  const me = S.people[myPid];
-  $('#myDot').style.background = me ? me.color : COLORS[0];
-  const mine = me ? me.artists : [];
+  const mine = (S.people[myPid] || {}).artists || [];
   $('#myPicks').innerHTML = mine.length ? mine.map(a =>
-    `<span class="chip"><img src="${esc(a.img)}" alt=""><span>${esc(a.name)}</span><b data-del="${a.id}">×</b></span>`).join('')
-    : '<div class="empty">上の検索から選んでね</div>';
-  const others = Object.entries(S.people).filter(([pid, p]) => pid !== myPid && p.artists.length);
-  $('#others').innerHTML = others.map(([, p]) =>
-    `<div class="person-block"><div class="who"><span class="dot" style="background:${esc(p.color)}"></span>${esc(p.name)}</div><div class="chips">${p.artists.map(a => `<span class="chip" style="padding-right:10px"><img src="${esc(a.img)}" alt=""><span>${esc(a.name)}</span></span>`).join('')}</div></div>`).join('');
+    `<div class="pk"><img src="${esc(a.img)}" alt=""><span>${esc(a.name)}</span><b data-del="${a.id}" title="外す">${IC.x}</b></div>`).join('')
+    : '<div class="empty">好きなアーティストを検索して追加しよう</div>';
   markResults();
 }
 const MODE_NOTE = {
@@ -645,17 +727,31 @@ function renderResult() {
   if (!has) return;
   const ti = $('#plTitle'); if (document.activeElement !== ti) ti.value = S.title || '';
   const sec = S.list.reduce((s, t) => s + (t.dur || 0), 0);
-  $('#listInfo').textContent = `${S.list.length}曲・約${Math.round(sec / 60)}分`;
+  const arts = new Set(S.list.map(t => t.aid)).size;
+  $('#listInfo').textContent = `${arts}組のアーティスト・${S.list.length}曲・約${Math.round(sec / 60)}分`;
+  // ジャケットを4枚並べた表紙
+  const imgs = [...new Set(S.list.map(t => t.img).filter(Boolean))];
+  const cv = $('#cover'); cv.classList.toggle('one', imgs.length < 4);
+  cv.innerHTML = (imgs.length < 4 ? imgs.slice(0, 1) : imgs.slice(0, 4)).map(u => `<img src="${esc(u)}" alt="">`).join('');
   renderTracks();
-  $('#savedList').innerHTML = S.saved.map(s => `<div class="sub" style="margin-top:6px">保存したプレイリスト（${s.n}曲${s.pub ? '' : '・非公開'}）：<a href="${esc(s.url)}" target="_blank" rel="noopener">Spotifyで開く</a></div>`).join('');
+  $('#savedList').innerHTML = S.saved.slice().reverse().map(s => `<div class="savedl">保存済み（${s.n}曲${s.pub ? '' : '・非公開'}） <a href="${esc(s.url)}" target="_blank" rel="noopener">Spotifyで開く ›</a></div>`).join('');
   renderSaveBtn();
 }
-const PLAY = '<svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg>', STOP = '<svg viewBox="0 0 10 10"><path d="M2 1h2.3v8H2zM5.7 1H8v8H5.7z"/></svg>';
+const fmtDur = s => s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}` : '';
 function renderTracks() {
   $('#tracks').innerHTML = S.list.map((t, i) => {
-    const p = S.people[t.by]; const col = p ? p.color : '#555';
-    return `<div class="tr"><span class="no">${i + 1}</span><span class="bar" style="background:${esc(col)}"></span><img src="${esc(t.img)}" alt="" loading="lazy"><div class="nm"><div>${esc(t.t)}</div><div class="a">${esc(t.a)}${p && Object.keys(S.people).length > 1 ? `<span class="badge">${esc(p.name)}</span>` : ''}</div></div><button class="ib play ${playingU === t.u ? 'on' : ''}" data-play="${esc(t.u)}" title="試聴">${playingU === t.u ? STOP : PLAY}</button><button class="ib" data-rm="${esc(t.u)}" title="外す">✕</button></div>`;
+    const on = playingU === t.u;
+    return `<div class="tr${on ? ' on' : ''}" data-play="${esc(t.u)}"><span class="no">${on ? '<span class="eq"><i></i><i></i><i></i></span>' : i + 1}</span><img src="${esc(t.img)}" alt="" loading="lazy"><div class="nm"><b>${esc(t.t)}</b><small>${esc(t.a)}</small></div><span class="du">${fmtDur(t.dur)}</span><button class="rm" data-rm="${esc(t.u)}" title="外す">${IC.x}</button></div>`;
   }).join('');
+  renderMini();
+}
+function renderMini() {
+  const tr = S.list.find(t => t.u === (playingU || miniU));
+  const m = $('#mini');
+  m.classList.toggle('hide', !tr);
+  if (!tr) return;
+  $('#miniImg').src = tr.img; $('#miniT').textContent = tr.t; $('#miniA').textContent = tr.a;
+  $('#miniBtn').innerHTML = playingU ? IC.pause : IC.play;
 }
 function renderSaveBtn() {
   const b = $('#btnSave');
@@ -684,9 +780,9 @@ $('#q').addEventListener('input', () => {
       const byName = new Map();
       for (const a of (d.data || [])) { const k = normT(a.name); const o = byName.get(k); if (!o || (a.nb_fan || 0) > (o.nb_fan || 0)) byName.set(k, a); }
       lastResults = [...byName.values()].filter(a => a.nb_fan > 0 || byName.size < 3)
-        .sort((x, y) => (score(y) - score(x)) || ((y.nb_fan || 0) - (x.nb_fan || 0)));
+        .sort((x, y) => (score(y) - score(x)) || ((y.nb_fan || 0) - (x.nb_fan || 0))).slice(0, 6);
       $('#results').innerHTML = lastResults.length ? lastResults.map(a =>
-        `<div class="ritem" data-pick="${a.id}"><img src="${esc(a.picture_small)}" alt="" loading="lazy"><div class="nm"><div>${esc(a.name)}</div><div class="sub">ファン ${fmtFans(a.nb_fan)}・${a.nb_album || 0}作品</div></div><span class="add"></span></div>`).join('')
+        `<div class="ritem" data-pick="${a.id}"><img src="${esc(a.picture_medium || a.picture_small)}" alt="" loading="lazy"><div class="nm"><b>${esc(a.name)}</b><small>アーティスト・ファン ${fmtFans(a.nb_fan)}</small></div><span class="add"></span></div>`).join('')
         : '<div class="empty">見つかりませんでした。英語表記でも試してみてね</div>';
       markResults();
     } catch (e) { if (seq === searchSeq) $('#results').innerHTML = '<div class="empty">検索できませんでした。通信を確認してね</div>'; }
@@ -697,13 +793,13 @@ function markResults() {
   for (const el of document.querySelectorAll('[data-pick]')) {
     const got = mine.has(+el.dataset.pick);
     el.classList.toggle('got', got);
-    el.querySelector('.add').textContent = got ? '✓ 選択中' : '＋ 追加';
+    el.querySelector('.add').innerHTML = got ? IC.check : IC.plus;
   }
 }
 
 // クリック
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-pick],[data-del],[data-play],[data-rm],[data-kick]');
+  const t = e.target.closest('[data-pick],[data-del],[data-rm],[data-play]');
   if (!t) return;
   if (t.dataset.pick) {
     const a = lastResults.find(x => x.id === +t.dataset.pick); if (!a) return;
@@ -711,10 +807,11 @@ document.addEventListener('click', e => {
     if (mine.some(x => x.id === a.id)) act({ t: 'del', id: a.id });
     else act({ t: 'add', a: { id: a.id, name: a.name, img: a.picture_medium || a.picture_small } });
   } else if (t.dataset.del) act({ t: 'del', id: +t.dataset.del });
+  else if (t.dataset.rm) { if (playingU === t.dataset.rm || miniU === t.dataset.rm) { audio.pause(); playingU = ''; miniU = ''; } act({ t: 'rm', u: t.dataset.rm }); }
   else if (t.dataset.play) { const tr = S.list.find(x => x.u === t.dataset.play); if (tr) togglePlay(tr); }
-  else if (t.dataset.rm) { if (playingU === t.dataset.rm) { audio.pause(); playingU = ''; } act({ t: 'rm', u: t.dataset.rm }); }
-  else if (t.dataset.kick) act({ t: 'kick', pid: t.dataset.kick });
 });
+$('#miniBtn').onclick = () => { const tr = S.list.find(t => t.u === (playingU || miniU)); if (tr) togglePlay(tr); };
+audio.ontimeupdate = () => { $('#miniBar').style.width = (audio.duration ? audio.currentTime / audio.duration * 100 : 0) + '%'; };
 $('#nMinus').onclick = () => act({ t: 'set', k: 'n', v: S.settings.n - 1 });
 $('#nPlus').onclick = () => act({ t: 'set', k: 'n', v: S.settings.n + 1 });
 $('#modeSeg').onclick = e => { const b = e.target.closest('button'); if (b) act({ t: 'set', k: 'mode', v: b.dataset.v }); };
@@ -733,6 +830,8 @@ $('#authPill').onclick = () => {
   if (getTok()) { if (confirm('Spotifyからログアウトしますか？')) { setTok(null); renderAuth(); renderSaveBtn(); } }
   else spLogin();
 };
+$('#plPub').checked = LS.get('spmix-pub', true);
+$('#plPub').onchange = () => LS.set('spmix-pub', $('#plPub').checked);
 // Client ID 入力
 function openCid() { $('#cidRedir').textContent = redirectUri(); $('#cidInput').value = LS.get('spmix-cid', ''); $('#cidModal').classList.remove('hide'); }
 $('#cidCancel').onclick = () => $('#cidModal').classList.add('hide');
