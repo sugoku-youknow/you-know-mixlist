@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ミックスリスト</title>
+<meta name="theme-color" content="#16131f">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{--bg:#16131f;--card:#221e2e;--card2:#2c2740;--line:#3a3450;--tx:#f2eff8;--sub:#a59fb8;--ac:#ff5c8a;--ac2:#7c5cff;--ok:#3ddc84;--warn:#ffb347}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+body{padding:0 16px calc(90px + env(safe-area-inset-bottom))}
+.wrap{max-width:560px;margin:0 auto}
+header{display:flex;align-items:center;gap:8px;padding:14px 0 6px}
+h1{font-size:20px;margin:0;flex:1;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--card2);color:var(--sub);border:1px solid var(--line);cursor:pointer;white-space:nowrap}
+.pill.on{color:var(--ok);border-color:#2f6b4c}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.card h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h2 small{font-weight:400;color:var(--sub);font-size:12px}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.btn{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-weight:600}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(90deg,var(--ac),var(--ac2));border:0;color:#fff}
+.btn.big{width:100%;padding:15px;font-size:17px;border-radius:14px}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>.grow{flex:1;min-width:0}
+input[type=text],input[type=search],input[type=tel]{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;outline:none}
+input:focus{border-color:var(--ac2)}
+.sub{color:var(--sub);font-size:13px}
+.code{font-size:30px;font-weight:800;letter-spacing:.15em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:3px 4px 3px 3px;font-size:13px;max-width:100%}
+.chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#000}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--sub);font-weight:400;cursor:pointer}
+.chip.person{padding:4px 10px}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.res{margin-top:8px;display:flex;flex-direction:column;gap:2px;max-height:320px;overflow:auto}
+.ritem{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;cursor:pointer}
+.ritem:hover,.ritem:active{background:var(--card2)}
+.ritem img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#000}
+.ritem .nm{flex:1;min-width:0}
+.ritem .nm div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ritem .add{color:var(--ac);font-weight:700;font-size:13px}
+.ritem.got .add{color:var(--ok)}
+.person-block{margin-top:10px}
+.person-block .who{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
+.seg button.on{background:var(--card2);border-color:var(--ac);color:#fff;font-weight:700}
+.lbl{font-size:13px;color:var(--sub);margin:12px 0 6px}
+.lbl:first-of-type{margin-top:0}
+.stepper{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.stepper button{width:34px;height:34px;border-radius:9px;background:var(--card2);font-size:18px}
+.stepper span{min-width:44px;text-align:center;font-weight:700}
+.tracks{margin-top:8px}
+.tr{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #2a2538}
+.tr:last-child{border-bottom:0}
+.tr .no{width:22px;text-align:right;color:var(--sub);font-size:12px;flex:none}
+.tr .bar{width:4px;align-self:stretch;border-radius:2px;flex:none}
+.tr img{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#000;flex:none}
+.tr .nm{flex:1;min-width:0}
+.tr .nm div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .nm .a{font-size:12px;color:var(--sub)}
+.ib{width:34px;height:34px;border-radius:50%;background:var(--card2);display:grid;place-items:center;flex:none;font-size:13px;color:var(--sub)}
+.ib.play.on{background:var(--ac);color:#fff}
+.ib svg{width:14px;height:14px;fill:currentColor}
+.badge{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--bg);color:var(--sub);margin-left:4px}
+.saved a{color:var(--ok)}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;z-index:20;text-align:center}
+#toast.show{opacity:1}
+.banner{background:#3b2a12;border:1px solid #6b4a1a;color:#ffd79a;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px}
+.prog{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));width:0;transition:width .2s}
+.hide{display:none!important}
+.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:16px;z-index:30}
+.modal .card{max-width:440px;width:100%}
+.note{font-size:12px;color:var(--sub);margin-top:8px}
+.empty{color:var(--sub);font-size:13px;padding:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>ミックスリスト</h1>
+    <span class="pill" id="authPill">Spotify未ログイン</span>
+  </header>
+
+  <!-- 部屋 -->
+  <div class="card" id="roomCard">
+    <div id="soloBox">
+      <h2>みんなで作る <small>ひとりでもそのまま使えます</small></h2>
+      <div class="row">
+        <button class="btn" id="btnHost">部屋を作る</button>
+        <input type="tel" inputmode="numeric" maxlength="4" placeholder="コード4けた" id="joinCode" class="grow" style="max-width:150px">
+        <button class="btn" id="btnJoin">入る</button>
+      </div>
+    </div>
+    <div id="roomBox" class="hide">
+      <div class="row">
+        <div class="grow">
+          <div class="sub" id="roomRole">部屋コード</div>
+          <div class="code" id="roomCode">----</div>
+        </div>
+        <button class="btn" id="btnShare">招待リンク</button>
+        <button class="btn" id="btnLeave">出る</button>
+      </div>
+      <div class="chips" id="people" style="margin-top:10px"></div>
+      <div class="banner hide" id="netBanner"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="sub">あなたの名前</span>
+      <input type="text" id="myName" maxlength="12" class="grow" placeholder="なまえ">
+    </div>
+  </div>
+
+  <!-- アーティスト -->
+  <div class="card">
+    <h2>アーティストを選ぶ</h2>
+    <input type="search" id="q" placeholder="アーティスト名で検索" autocomplete="off">
+    <div class="res" id="results"></div>
+    <div class="person-block">
+      <div class="who"><span class="dot" id="myDot"></span>あなたが選んだアーティスト</div>
+      <div class="chips" id="myPicks"></div>
+    </div>
+    <div id="others"></div>
+  </div>
+
+  <!-- 設定 -->
+  <div class="card">
+    <h2>選び方</h2>
+    <div class="lbl">1アーティストあたりの曲数</div>
+    <div class="stepper"><button id="nMinus">−</button><span id="nVal">3曲</span><button id="nPlus">＋</button></div>
+    <div class="lbl">曲の選び方</div>
+    <div class="seg" id="modeSeg">
+      <button data-v="top">人気TOP</button>
+      <button data-v="toprand">人気曲からランダム</button>
+      <button data-v="rand">全曲からランダム</button>
+      <button data-v="mix">人気＋ランダム半々</button>
+    </div>
+    <div class="note" id="modeNote"></div>
+    <div class="lbl">並べ方</div>
+    <div class="seg" id="orderSeg">
+      <button data-v="shuffle">シャッフル</button>
+      <button data-v="turn">みんな順番に</button>
+      <button data-v="artist">アーティストごと</button>
+    </div>
+  </div>
+
+  <button class="btn pri big" id="btnGen">プレイリストを作る</button>
+  <div class="prog hide" id="genProg"><i></i></div>
+
+  <!-- 結果 -->
+  <div class="card hide" id="resultCard">
+    <h2>できたプレイリスト <small id="listInfo"></small></h2>
+    <input type="text" id="plTitle" maxlength="60" placeholder="プレイリストの名前">
+    <div class="row" style="margin-top:8px">
+      <button class="btn" id="btnShuf">並べ直す</button>
+      <button class="btn" id="btnRegen">選び直す</button>
+    </div>
+    <div class="tracks" id="tracks"></div>
+    <label class="sub" style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer"><input type="checkbox" id="plPub" style="width:18px;height:18px;accent-color:var(--ac)">公開プレイリストにする（友達がリンクから開ける）</label>
+    <div class="row" style="margin-top:8px">
+      <button class="btn pri grow" id="btnSave">Spotifyに保存</button>
+      <button class="btn" id="btnCopy">曲リストをコピー</button>
+    </div>
+    <div class="prog hide" id="saveProg"><i></i></div>
+    <div class="sub" id="saveMsg" style="margin-top:6px"></div>
+    <div class="saved" id="savedList"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div class="modal hide" id="cidModal">
+  <div class="card">
+    <h2>Spotify連携の設定</h2>
+    <div class="sub">Spotify Developer Dashboard で作ったアプリの Client ID を入れてください（この端末に保存されます）。</div>
+    <input type="text" id="cidInput" placeholder="Client ID" style="margin-top:10px">
+    <div class="note">Redirect URI に登録するアドレス：<br><b id="cidRedir"></b></div>
+    <div class="row" style="margin-top:12px;justify-content:flex-end">
+      <button class="btn" id="cidCancel">やめる</button>
+      <button class="btn pri" id="cidOk">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ===== 設定 =====
+const CLIENT_ID = '';            // Spotify Developer Dashboard の Client ID（入れればみんな設定不要）
+const MOCK = /[?&]mock=1/.test(location.search);   // テスト用：Spotifyを偽物にする
+const SCOPES = 'playlist-modify-private playlist-modify-public';
+const NET_PREFIX = 'spmix-v1-';
+const MAX_ARTISTS = 12;
+const COLORS = ['#ff6b8b','#4dc3ff','#ffc94d','#7be07b','#c38bff','#ff9e57','#5ee0d0','#f37bd8'];
+
+// ===== 小物 =====
+const $ = s => document.querySelector(s);
+const store = (st) => ({
+  get(k, d) { try { const v = st.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { st.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { st.removeItem(k); } catch (e) {} }
+});
+const LS = store(window.localStorage), SS = store(window.sessionStorage);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rid = (n = 10) => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join('');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+let toastT;
+function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms); }
+const fmtFans = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n || 0);
+function baseTitle(t) {
+  return String(t).toLowerCase().normalize('NFKC')
+    .replace(/[\(\[【（].*?[\)\]】）]/g, '')
+    .replace(/\s+-\s+.*$/, '')
+    .replace(/[\s・,.'’!！?？~〜\-]/g, '');
+}
+const BAD = /\b(live|instrumental|inst\.?|karaoke|off ?vocal|acoustic ver|remix|tv size)\b|ライブ|カラオケ|インスト/i;
+
+// ===== Deezer（ログイン不要の音楽データ） =====
+let jpN = 0;
+function jsonp(path) {
+  return new Promise((res, rej) => {
+    const cb = '__dz' + (++jpN) + Date.now().toString(36);
+    const s = document.createElement('script');
+    const timer = setTimeout(() => { clean(); rej(new Error('timeout')); }, 12000);
+    function clean() { clearTimeout(timer); window[cb] = () => {}; s.remove(); }
+    window[cb] = d => { clean(); if (d && d.error) { const e = new Error(d.error.message || 'deezer'); e.code = d.error.code; rej(e); } else res(d); };
+    s.onerror = () => { clean(); rej(new Error('network')); };
+    s.src = 'https://api.deezer.com/' + path + (path.includes('?') ? '&' : '?') + 'output=jsonp&callback=' + cb;
+    document.head.appendChild(s);
+  });
+}
+const dzQ = []; let dzActive = 0;
+function dz(path) { return new Promise((res, rej) => { dzQ.push({ path, res, rej, tries: 0 }); dzPump(); }); }
+function dzPump() {
+  while (dzActive < 4 && dzQ.length) {
+    const j = dzQ.shift(); dzActive++;
+    jsonp(j.path).then(j.res, e => {
+      if (e.code === 800 || ++j.tries >= 3) j.rej(e);   // 800 = no data
+      else setTimeout(() => { dzQ.push(j); dzPump(); }, 700 * j.tries);
+    }).finally(() => { dzActive--; dzPump(); });
+  }
+}
+const dzCache = new Map();
+function dzc(path) { if (!dzCache.has(path)) dzCache.set(path, dz(path).catch(e => { dzCache.delete(path); throw e; })); return dzCache.get(path); }
+
+function mkTrack(t, album, pick, by) {
+  const al = album || t.album || {};
+  return { u: rid(6), id: t.id, t: t.title, a: (t.artist && t.artist.name) || pick.name, aid: pick.id,
+    img: al.cover_small || al.cover_medium || pick.img || '', pv: t.preview || '', isrc: t.isrc || '', by, dur: t.duration || 0 };
+}
+const byArtist = (t, aid) => (t.artist && t.artist.id === aid) || (t.contributors || []).some(c => c.id === aid);
+function goodList(list, aid) {
+  const seen = new Set(), out = [];
+  for (const t of list) {
+    if (t.readable === false || !byArtist(t, aid)) continue;
+    const k = baseTitle(t.title); if (!k || seen.has(k)) continue;
+    seen.add(k); out.push(t);
+  }
+  const clean = out.filter(t => !BAD.test(t.title));
+  return clean.length >= 3 ? clean : out;
+}
+async function topTracks(aid) { const d = await dzc(`artist/${aid}/top?limit=60`); return goodList(d.data || [], aid); }
+async function albumsOf(aid) {
+  const d = await dzc(`artist/${aid}/albums?limit=100`);
+  return (d.data || []).filter(a => a.record_type !== 'compile' && !BAD.test(a.title));
+}
+async function albumTracks(al) { const d = await dzc(`album/${al.id}/tracks?limit=100`); return d.data || []; }
+
+async function pickRandom(pick, n, exclude) {
+  const out = [];
+  let albums = shuffle(await albumsOf(pick.id));
+  // アルバムを優先（シングルばかりにならないよう重みづけ）
+  albums.sort((x, y) => (Math.random() * (x.record_type === 'album' ? 1.6 : 1)) < (Math.random() * (y.record_type === 'album' ? 1.6 : 1)) ? 1 : -1);
+  for (let pass = 0; pass < 3 && out.length < n; pass++) {
+    for (const al of albums) {
+      if (out.length >= n) break;
+      let tr;
+      try { tr = await albumTracks(al); } catch (e) { continue; }
+      const cand = shuffle(tr.filter(t => t.readable !== false && byArtist(t, pick.id) && !BAD.test(t.title) && !exclude.has(baseTitle(t.title))));
+      if (!cand.length) continue;
+      exclude.add(baseTitle(cand[0].title));
+      out.push({ t: cand[0], al });
+    }
+  }
+  return out;
+}
+async function picksFor(pick, n, mode, by) {
+  const exclude = new Set(), res = [];
+  const fromTop = async (k, randomize) => {
+    if (k <= 0) return;
+    let list = (await topTracks(pick.id).catch(() => [])).filter(t => !exclude.has(baseTitle(t.title)));
+    list = randomize ? shuffle(list.slice(0, Math.max(20, k * 3))) : list;
+    for (const t of list.slice(0, k)) { exclude.add(baseTitle(t.title)); res.push(mkTrack(t, null, pick, by)); }
+  };
+  const fromAll = async k => {
+    if (k <= 0) return;
+    const r = await pickRandom(pick, k, exclude).catch(() => []);
+    for (const x of r) res.push(mkTrack(x.t, x.al, pick, by));
+  };
+  if (mode === 'top') await fromTop(n, false);
+  else if (mode === 'toprand') await fromTop(n, true);
+  else if (mode === 'rand') await fromAll(n);
+  else { const k = Math.ceil(n / 2); await fromTop(k, true); await fromAll(n - res.length); }
+  // 足りなければ反対側から補う
+  if (res.length < n) await (mode === 'rand' ? fromTop(n - res.length, true) : fromAll(n - res.length));
+  if (res.length < n) await fromTop(n - res.length, true);
+  return res;
+}
+function orderTracks(groups, how) {
+  // groups: [[pid, [[aid,[tracks]],...]],...]
+  if (how === 'artist') return groups.flatMap(([, arts]) => arts.flatMap(([, ts]) => ts));
+  if (how === 'turn') {
+    const queues = groups.map(([, arts]) => {
+      const q = [], lists = arts.map(([, ts]) => ts.slice());
+      while (lists.some(l => l.length)) for (const l of lists) if (l.length) q.push(l.shift());
+      return q;
+    });
+    const out = [];
+    while (queues.some(q => q.length)) for (const q of queues) if (q.length) out.push(q.shift());
+    return out;
+  }
+  return spreadShuffle(groups.flatMap(([, arts]) => arts.flatMap(([, ts]) => ts)));
+}
+function spreadShuffle(list) {
+  const a = shuffle(list);
+  for (let i = 1; i < a.length; i++) {
+    if (a[i].aid !== a[i - 1].aid) continue;
+    for (let j = i + 1; j < a.length; j++) {
+      if (a[j].aid !== a[i - 1].aid && (i + 1 >= a.length || a[j].aid !== a[i + 1].aid || j === i + 1)) { [a[i], a[j]] = [a[j], a[i]]; break; }
+    }
+  }
+  return a;
+}
+
+// ===== 状態 =====
+let myPid = SS.get('spmix-pid', null) || rid(8); SS.set('spmix-pid', myPid);
+let myName = LS.get('spmix-name', '') || '';
+const S = {               // 部屋で共有される状態（部屋なし＝自分がホスト扱い）
+  people: {},             // pid -> {name,color,artists:[{id,name,img}],on}
+  settings: { n: 3, mode: 'mix', order: 'shuffle' },
+  list: [], title: '', saved: [], busy: '', ver: 0
+};
+const NET = { mode: 'solo', code: '', peer: null, conns: new Map(), host: null, lastHost: 0, timer: 0, joining: false };
+
+function nextColor() {
+  const used = Object.values(S.people).map(p => p.color);
+  return COLORS.find(c => !used.includes(c)) || COLORS[Object.keys(S.people).length % COLORS.length];
+}
+function ensureMe() {
+  if (!S.people[myPid]) S.people[myPid] = { name: myName || 'あなた', color: nextColor(), artists: [], on: true };
+}
+function loadSolo() {
+  const d = LS.get('spmix-solo', null);
+  if (d) { Object.assign(S.settings, d.settings || {}); S.list = d.list || []; S.title = d.title || ''; S.saved = d.saved || [];
+    ensureMe(); S.people[myPid].artists = d.artists || []; }
+  ensureMe();
+}
+function persist() {
+  if (NET.mode === 'solo') LS.set('spmix-solo', { settings: S.settings, list: S.list, title: S.title, saved: S.saved.slice(-5), artists: (S.people[myPid] || {}).artists || [] });
+  if (NET.mode === 'host') SS.set('spmix-host', { code: NET.code, state: S });
+}
+
+// ===== 操作（ホストが適用して全員へ配る） =====
+function act(op) {
+  if (NET.mode === 'guest') { send(NET.host, op); return; }
+  apply(op, myPid);
+}
+function apply(op, from) {
+  const P = S.people;
+  switch (op.t) {
+    case 'hi': {
+      const p = P[from] || (P[from] = { name: '', color: nextColor(), artists: [] });
+      p.name = String(op.name || 'ゲスト').slice(0, 12); p.on = true;
+      for (const a of (op.artists || [])) if (p.artists.length < MAX_ARTISTS && !p.artists.some(x => x.id === a.id)) p.artists.push(cleanArtist(a));
+      break;
+    }
+    case 'name': if (P[from]) P[from].name = String(op.name || '').slice(0, 12) || 'ゲスト'; break;
+    case 'add': { const p = P[from]; if (!p) return; const a = cleanArtist(op.a);
+      if (!a.id || p.artists.some(x => x.id === a.id)) return;
+      if (p.artists.length >= MAX_ARTISTS) { if (from === myPid) toast(`ひとり${MAX_ARTISTS}組までです`); return; }
+      p.artists.push(a); break; }
+    case 'del': { const p = P[from]; if (p) p.artists = p.artists.filter(x => x.id !== op.id); break; }
+    case 'kick': if (from === myPid && op.pid !== myPid) delete P[op.pid]; break;
+    case 'set': {
+      const v = op.v, s = S.settings;
+      if (op.k === 'n') s.n = Math.max(1, Math.min(10, v | 0));
+      if (op.k === 'mode' && ['top', 'toprand', 'rand', 'mix'].includes(v)) s.mode = v;
+      if (op.k === 'order' && ['shuffle', 'turn', 'artist'].includes(v)) s.order = v;
+      break;
+    }
+    case 'gen': generate(from); return;
+    case 'rm': S.list = S.list.filter(t => t.u !== op.u); break;
+    case 'shuf': S.list = S.settings.order === 'shuffle' || op.force ? spreadShuffle(S.list) : S.list; break;
+    case 'title': S.title = String(op.v || '').slice(0, 60); break;
+    case 'saved': if (!/^https:\/\/open\.spotify\.com\//.test(String(op.url || ''))) return;
+      S.saved.push({ by: String(op.by || '').slice(0, 12), url: String(op.url || ''), n: op.n | 0, pub: !!op.pub }); S.saved = S.saved.slice(-8); break;
+    default: return;
+  }
+  changed();
+}
+function cleanArtist(a) { a = a || {}; return { id: +a.id || 0, name: String(a.name || '').slice(0, 60), img: String(a.img || '').slice(0, 300) }; }
+function changed() { S.ver++; persist(); render(); broadcast(); }
+
+async function generate(from) {
+  if (S.busy) return;
+  const groups = Object.entries(S.people).filter(([, p]) => p.artists.length);
+  if (!groups.length) { if (from === myPid) toast('アーティストを選んでね'); return; }
+  // 同じアーティストを複数人が選んだら1回だけ集めて、曲を選んだ人で分け合う
+  const uniq = new Map();
+  for (const [pid, p] of groups) for (const a of p.artists) { if (!uniq.has(a.id)) uniq.set(a.id, { a, pids: [] }); uniq.get(a.id).pids.push(pid); }
+  const total = uniq.size;
+  let done = 0;
+  S.busy = 'gen'; S.prog = 0; changed();
+  const { n, mode, order } = S.settings;
+  try {
+    const got = new Map();
+    await Promise.all([...uniq.values()].map(async ({ a, pids }) => {
+      const ts = await picksFor(a, n, mode, pids[0]).catch(() => []);
+      ts.forEach((t, i) => { t.by = pids[i % pids.length]; });
+      got.set(a.id, ts);
+      done++; S.prog = done / total; renderProg(); broadcastSoon();
+    }));
+    const res = groups.map(([pid, p]) => [pid, p.artists.map(a => [a.id, (got.get(a.id) || []).filter(t => t.by === pid)])]);
+    const list = orderTracks(res, order);
+    if (!list.length) throw new Error('empty');
+    S.list = list;
+    if (!S.title) S.title = defaultTitle();
+    const miss = [...got.values()].filter(ts => !ts.length);
+    if (miss.length) toast(`${miss.length}組のアーティストの曲が見つかりませんでした`);
+  } catch (e) {
+    toast('曲を集められませんでした。通信を確認してね');
+  }
+  S.busy = ''; S.prog = 0; changed();
+  setTimeout(() => $('#resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+function defaultTitle() {
+  const d = new Date(); const names = Object.values(S.people).filter(p => p.artists.length).map(p => p.name);
+  return (names.length > 1 ? names.slice(0, 4).join('・') + 'の' : '') + `ミックス ${d.getMonth() + 1}/${d.getDate()}`;
+}
+
+// ===== 通信（PeerJS） =====
+function send(c, d) { try { if (c && c.open) c.send(d); } catch (e) {} }
+function snapshot() { return { t: 'st', s: { people: S.people, settings: S.settings, list: S.list, title: S.title, saved: S.saved, busy: S.busy, prog: S.prog || 0, ver: S.ver } }; }
+function broadcast() { if (NET.mode !== 'host') return; const d = snapshot(); for (const c of NET.conns.values()) send(c, d); }
+let bcT = 0;
+function broadcastSoon() { if (NET.mode !== 'host' || bcT) return; bcT = setTimeout(() => { bcT = 0; broadcast(); }, 250); }
+
+function startHost(code) {
+  stopNet();
+  NET.mode = 'host'; NET.code = code || String(Math.floor(1000 + Math.random() * 9000));
+  const peer = NET.peer = new Peer(NET_PREFIX + NET.code);
+  peer.on('open', () => { renderRoom(); banner(''); });
+  peer.on('error', e => {
+    if (e.type === 'unavailable-id') { if (NET.peer === peer) startHost(); return; }
+    if (e.type === 'network' || e.type === 'server-error' || e.type === 'socket-error' || e.type === 'socket-closed') banner('通信サーバーにつながりません。再接続しています…');
+  });
+  peer.on('disconnected', () => { if (NET.peer === peer && !peer.destroyed) setTimeout(() => { try { peer.reconnect(); } catch (e) {} }, 1500); });
+  peer.on('connection', c => {
+    c.on('data', d => {
+      if (!d || typeof d !== 'object') return;
+      c.lastSeen = Date.now();
+      if (d.t === 'p') return;
+      if (d.t === 'hi') { c.pid = String(d.pid || '').slice(0, 20); const old = NET.conns.get(c.pid); if (old && old !== c) try { old.close(); } catch (e) {} NET.conns.set(c.pid, c); }
+      if (!c.pid) return;
+      apply(d, c.pid);
+      if (d.t === 'hi') send(c, snapshot());
+    });
+    c.on('close', () => dropConn(c));
+    c.on('error', () => dropConn(c));
+  });
+  ensureMe(); S.people[myPid].on = true;
+  clearInterval(NET.timer);
+  NET.timer = setInterval(() => {
+    const now = Date.now();
+    for (const c of NET.conns.values()) { send(c, { t: 'p' }); if (now - (c.lastSeen || now) > 8000) { try { c.close(); } catch (e) {} dropConn(c); } }
+  }, 2000);
+  SS.del('spmix-guest');
+  changed();
+}
+function dropConn(c) {
+  if (!c.pid || NET.conns.get(c.pid) !== c) return;
+  NET.conns.delete(c.pid);
+  if (S.people[c.pid]) { S.people[c.pid].on = false; changed(); }
+}
+
+function startGuest(code, first) {
+  stopNet();
+  NET.mode = 'guest'; NET.code = code; NET.joining = !!first; NET.lastHost = Date.now();
+  SS.set('spmix-guest', { code });
+  renderRoom();
+  connectGuest();
+  NET.timer = setInterval(() => {
+    send(NET.host, { t: 'p' });
+    if (Date.now() - NET.lastHost > 7000) { banner('部屋とつながっていません。再接続しています…', true); connectGuest(); }
+  }, 2000);
+}
+function connectGuest() {
+  if (NET.peer) try { NET.peer.destroy(); } catch (e) {}
+  NET.lastHost = Date.now();
+  const peer = NET.peer = new Peer();
+  peer.on('open', () => {
+    const c = peer.connect(NET_PREFIX + NET.code, { reliable: true });
+    NET.host = c;
+    c.on('open', () => {
+      const mine = (S.people[myPid] || {}).artists || [];
+      send(c, { t: 'hi', pid: myPid, name: myName || 'ゲスト', artists: mine });
+    });
+    c.on('data', d => {
+      if (!d || typeof d !== 'object' || NET.peer !== peer) return;
+      NET.lastHost = Date.now();
+      if (d.t === 'st') {
+        if (NET.joining) { NET.joining = false; toast('部屋に入りました'); }
+        banner('');
+        const s = d.s; S.people = s.people || {}; S.settings = s.settings || S.settings; S.list = s.list || [];
+        S.title = s.title || ''; S.saved = s.saved || []; S.busy = s.busy || ''; S.prog = s.prog || 0; S.ver = s.ver;
+        render();
+        if (resumeSave && S.list.length) { resumeSave = false; setTimeout(saveToSpotify, 300); }
+      }
+    });
+  });
+  peer.on('error', e => {
+    if (NET.peer !== peer) return;
+    if (e.type === 'peer-unavailable') {
+      if (NET.joining) { toast('その部屋は見つかりませんでした'); leaveRoom(); return; }
+      banner('部屋とつながっていません（ホストがいないかも）。再接続しています…', true);
+    }
+  });
+}
+function stopNet() {
+  clearInterval(NET.timer); NET.timer = 0;
+  for (const c of NET.conns.values()) try { c.close(); } catch (e) {}
+  NET.conns.clear();
+  if (NET.peer) try { NET.peer.destroy(); } catch (e) {}
+  NET.peer = null; NET.host = null;
+}
+function leaveRoom() {
+  const mine = (S.people[myPid] || {}).artists || [];
+  stopNet(); NET.mode = 'solo'; NET.code = '';
+  SS.del('spmix-host'); SS.del('spmix-guest');
+  S.people = {}; S.busy = ''; ensureMe(); S.people[myPid].artists = mine;
+  banner(''); changed();
+}
+function banner(msg, offerSolo) {
+  const b = $('#netBanner');
+  if (!msg) { b.classList.add('hide'); return; }
+  b.classList.remove('hide');
+  b.innerHTML = esc(msg) + (offerSolo ? ' <button class="btn" style="padding:4px 10px;margin-left:6px" id="goSolo">ひとりで続ける</button>' : '');
+  const g = $('#goSolo'); if (g) g.onclick = () => { const keep = JSON.parse(JSON.stringify(S)); leaveRoom(); S.list = keep.list; S.title = keep.title; S.settings = keep.settings; changed(); };
+}
+
+// ===== Spotify =====
+function clientId() { return CLIENT_ID || LS.get('spmix-cid', '') || (MOCK ? 'mock' : ''); }
+function redirectUri() { return location.origin + location.pathname.replace(/index\.html$/, ''); }
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+function getTok() { return LS.get(MOCK ? 'spmix-tok-mock' : 'spmix-tok', null); }
+function setTok(t) { LS.set(MOCK ? 'spmix-tok-mock' : 'spmix-tok', t); }
+let pendingSave = false, resumeSave = false, pkPrep = null;
+// iPhoneでポップアップが止められないよう、PKCEの値は先に作っておく（クリック中に await しない）
+async function prepPkce() {
+  const v = rid(64);
+  const ch = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)));
+  pkPrep = { v, ch, st: rid(16) };
+}
+function spLogin() {
+  if (!clientId()) { openCid(); return; }
+  if (MOCK) { setTok({ access: 'mock', refresh: 'mock', exp: Date.now() + 3600e3 }); renderAuth(); renderSaveBtn(); if (pendingSave) { pendingSave = false; saveToSpotify(); } return; }
+  if (!pkPrep) { prepPkce().then(() => toast('もう一度押してね')); return; }
+  const pk = pkPrep; pkPrep = null; prepPkce();
+  const url = 'https://accounts.spotify.com/authorize?' + new URLSearchParams({
+    client_id: clientId(), response_type: 'code', redirect_uri: redirectUri(),
+    code_challenge_method: 'S256', code_challenge: pk.ch, state: pk.st, scope: SCOPES
+  });
+  LS.set('spmix-pkce', { v: pk.v, st: pk.st, popup: true, ts: Date.now() });
+  const w = window.open(url, 'spmix-login');
+  if (!w) {
+    LS.set('spmix-pkce', { v: pk.v, st: pk.st, popup: false, ts: Date.now() });
+    SS.set('spmix-resume-save', pendingSave); location.href = url;
+  } else toast('開いた画面でSpotifyにログインしてね', 4000);
+}
+async function handleCallback() {
+  const p = new URLSearchParams(location.search);
+  if (!p.has('code') && !p.has('error')) return false;
+  const pk = LS.get('spmix-pkce', null);
+  history.replaceState(null, '', redirectUri());
+  // ポップアップかどうかは window.name ではなく保存した記録で判断（部屋の二重起動を防ぐ）
+  const popup = !pk || pk.popup !== false;
+  let ok = false, msg = '';
+  if (p.get('error')) msg = 'ログインがキャンセルされました';
+  else if (!pk || pk.st !== p.get('state')) msg = 'ログインの確認に失敗しました。もう一度試してね';
+  else {
+    try {
+      const r = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ grant_type: 'authorization_code', code: p.get('code'), redirect_uri: redirectUri(), client_id: clientId(), code_verifier: pk.v }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error_description || j.error);
+      setTok({ access: j.access_token, refresh: j.refresh_token, exp: Date.now() + (j.expires_in - 60) * 1000 });
+      LS.del('spmix-pkce'); ok = true;
+    } catch (e) { msg = 'ログインに失敗しました：' + e.message; }
+  }
+  if (popup) {
+    document.body.innerHTML = `<div class="wrap"><div class="card" style="margin-top:40px;text-align:center"><h2 style="justify-content:center">${ok ? 'ログインできました！' : esc(msg)}</h2><div class="sub">このタブを閉じて、元の画面に戻ってください。</div></div></div>`;
+    setTimeout(() => window.close(), 800);
+    return true;
+  }
+  if (msg) setTimeout(() => toast(msg), 300);
+  if (ok && SS.get('spmix-resume-save', false)) resumeSave = true;
+  SS.del('spmix-resume-save');
+  return false;
+}
+async function refreshTok(t) {
+  const r = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: t.refresh, client_id: clientId() }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { setTok(null); renderAuth(); const e = new Error('login'); e.status = 401; throw e; }
+  const nt = { access: j.access_token, refresh: j.refresh_token || t.refresh, exp: Date.now() + (j.expires_in - 60) * 1000 };
+  setTok(nt); return nt;
+}
+async function sp(path, opts = {}, tries = 0) {
+  let t = getTok();
+  if (!t) { const e = new Error('login'); e.status = 401; throw e; }
+  if (!MOCK && Date.now() > t.exp) t = await refreshTok(t);
+  const init = { method: opts.method || 'GET', headers: { Authorization: 'Bearer ' + t.access } };
+  if (opts.body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
+  const r = MOCK ? await mockSpotify(path, init) : await fetch('https://api.spotify.com/v1' + path, init);
+  if (r.status === 401 && tries < 1 && !MOCK) { await refreshTok(t); return sp(path, opts, tries + 1); }
+  if (r.status === 429 && tries < 4) { const ra = Math.min(30, +(r.headers.get('Retry-After') || 2)); await sleep(ra * 1000 + 200); return sp(path, opts, tries + 1); }
+  if ((r.status === 502 || r.status === 503) && tries < 2) { await sleep(1000); return sp(path, opts, tries + 1); }
+  const j = r.status === 204 ? {} : await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error((j.error && j.error.message) || ('HTTP ' + r.status)); e.status = r.status; throw e; }
+  return j;
+}
+const normT = s => String(s).toLowerCase().normalize('NFKC').replace(/[\(\[【（].*?[\)\]】）]/g, '').replace(/\s+-\s+.*$/, '').replace(/[\s'’"!！?？・.,~〜\-]/g, '');
+async function spMatch(tr) {
+  let isrc = tr.isrc;
+  if (!isrc) { try { isrc = (await dzc('track/' + tr.id)).isrc || ''; } catch (e) {} }
+  if (isrc) {
+    const r = await sp('/search?' + new URLSearchParams({ q: 'isrc:' + isrc, type: 'track', limit: 1 }));
+    const it = r.tracks && r.tracks.items && r.tracks.items[0];
+    if (it) return it.uri;
+  }
+  const title = String(tr.t).replace(/[\(\[（【].*?[\)\]）】]/g, '').trim() || tr.t;
+  const r = await sp('/search?' + new URLSearchParams({ q: `track:${title} artist:${tr.a}`, type: 'track', limit: 5 }));
+  const items = (r.tracks && r.tracks.items) || [];
+  const want = normT(tr.t);
+  const hit = items.find(x => normT(x.name) === want) || items.find(x => normT(x.name).startsWith(want) || want.startsWith(normT(x.name)));
+  if (hit) return hit.uri;
+  const r2 = await sp('/search?' + new URLSearchParams({ q: `${title} ${tr.a}`, type: 'track', limit: 5 }));
+  const it2 = ((r2.tracks && r2.tracks.items) || []).find(x => normT(x.name) === want);
+  return it2 ? it2.uri : null;
+}
+let saving = false;
+async function saveToSpotify() {
+  if (saving || !S.list.length) return;
+  if (!clientId()) { openCid(); return; }
+  if (!getTok()) { pendingSave = true; spLogin(); return; }
+  saving = true; renderSaveBtn();
+  const prog = $('#saveProg'), bar = prog.firstElementChild, msg = $('#saveMsg');
+  prog.classList.remove('hide'); bar.style.width = '0';
+  const list = S.list.slice();
+  try {
+    msg.textContent = 'Spotifyで曲を探しています…';
+    await sp('/me');
+    const uris = new Array(list.length).fill(null); let k = 0, done = 0;
+    const worker = async () => {
+      while (k < list.length) {
+        const i = k++;
+        try { uris[i] = await spMatch(list[i]); } catch (e) { if (e.status === 401 || e.status === 403) throw e; }
+        done++; bar.style.width = (done / list.length * 85) + '%';
+        msg.textContent = `Spotifyで曲を探しています… ${done}/${list.length}`;
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    const found = uris.filter(Boolean);
+    if (!found.length) throw new Error('Spotifyで曲が見つかりませんでした');
+    msg.textContent = 'プレイリストを作っています…';
+    const title = (S.title || defaultTitle()).slice(0, 100);
+    const pub = $('#plPub').checked;
+    const pl = await sp('/me/playlists', { method: 'POST', body: { name: title, public: pub, description: 'ミックスリストで作成' } });
+    for (let i = 0; i < found.length; i += 100) await sp(`/playlists/${pl.id}/items`, { method: 'POST', body: { uris: found.slice(i, i + 100) } });
+    bar.style.width = '100%';
+    const url = (pl.external_urls && pl.external_urls.spotify) || `https://open.spotify.com/playlist/${pl.id}`;
+    const miss = list.length - found.length;
+    msg.innerHTML = `保存しました（${found.length}曲${miss ? `・見つからなかった曲 ${miss}` : ''}） <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--ok)">Spotifyで開く</a>`;
+    act({ t: 'saved', by: myName || 'あなた', url, n: found.length, pub });
+  } catch (e) {
+    if (e.status === 401) { msg.textContent = 'ログインし直してね'; setTok(null); renderAuth(); }
+    else if (e.status === 403) msg.innerHTML = 'このSpotifyアカウントはまだ使えるように登録されていません。<br>アプリを作った人に登録してもらうか、「曲リストをコピー」を使ってね。';
+    else msg.textContent = '保存できませんでした：' + e.message;
+  }
+  setTimeout(() => prog.classList.add('hide'), 1200);
+  saving = false; renderSaveBtn();
+}
+
+// ===== テスト用の厳しめSpotify（?mock=1） =====
+let mockN = 0;
+async function mockSpotify(path, init) {
+  await sleep(30 + Math.random() * 60);
+  const R = (st, body, h = {}) => new Response(st === 204 ? null : JSON.stringify(body), { status: st, headers: h });
+  const u = new URL('https://x' + path); const m = init.method;
+  if (++mockN % 9 === 0) return R(429, { error: { status: 429, message: 'Too many requests' } }, { 'Retry-After': '1' });
+  if (/\/top-tracks|^\/users\/|\/tracks$|^\/tracks\?|^\/artists\?|^\/albums\?|^\/markets/.test(u.pathname + (u.search ? '?' : ''))) return R(404, { error: { status: 404, message: 'removed' } });
+  if (u.pathname === '/me' && m === 'GET') return R(200, { id: 'mockuser', display_name: 'テスト' });
+  if (u.pathname === '/search') {
+    const lim = +(u.searchParams.get('limit') || 5);
+    if (lim > 10) return R(400, { error: { status: 400, message: 'Invalid limit' } });
+    const q = u.searchParams.get('q') || '';
+    if (q.startsWith('isrc:')) return R(200, { tracks: { items: Math.random() < 0.85 ? [{ uri: 'spotify:track:' + q.slice(5), name: 'x' }] : [] } });
+    const tm = q.match(/track:(.*?) artist:/); const name = tm ? tm[1] : q;
+    return R(200, { tracks: { items: Math.random() < 0.6 ? [{ uri: 'spotify:track:n' + rid(6), name }] : [] } });
+  }
+  if (u.pathname === '/me/playlists' && m === 'POST') { const b = JSON.parse(init.body); if (!b.name) return R(400, {}); window.__mockPl = { name: b.name, items: [] }; return R(201, { id: 'mockpl' + rid(4), external_urls: { spotify: 'https://open.spotify.com/playlist/mock' } }); }
+  const pm = u.pathname.match(/^\/playlists\/([^/]+)\/items$/);
+  if (pm && m === 'POST') { const b = JSON.parse(init.body); if (!b.uris || b.uris.length > 100) return R(400, { error: { message: 'too many' } }); window.__mockPl.items.push(...b.uris); return R(201, { snapshot_id: 's' }); }
+  return R(404, { error: { status: 404, message: 'mock: unknown ' + path } });
+}
+
+// ===== 試聴 =====
+const audio = new Audio(); let playingU = '';
+audio.onended = () => { playingU = ''; renderTracks(); };
+async function togglePlay(tr) {
+  if (playingU === tr.u) { audio.pause(); playingU = ''; renderTracks(); return; }
+  playingU = tr.u; renderTracks();
+  const tryPlay = async src => { audio.src = src; await audio.play(); };
+  try { if (!tr.pv) throw 0; await tryPlay(tr.pv); }
+  catch (e) {
+    try { const d = await dz('track/' + tr.id); if (!d.preview) throw 0; tr.pv = d.preview; if (playingU === tr.u) await tryPlay(d.preview); }
+    catch (e2) { if (playingU === tr.u) { playingU = ''; renderTracks(); toast('この曲は試聴できません'); } }
+  }
+}
+
+// ===== 画面 =====
+function render() {
+  renderRoom(); renderPicks(); renderSettings(); renderGen(); renderResult();
+}
+function renderAuth() {
+  const p = $('#authPill'), t = getTok();
+  p.textContent = t ? (MOCK ? 'Spotify（テスト）' : 'Spotifyログイン中') : 'Spotify未ログイン';
+  p.classList.toggle('on', !!t);
+}
+function renderRoom() {
+  const inRoom = NET.mode !== 'solo';
+  $('#soloBox').classList.toggle('hide', inRoom);
+  $('#roomBox').classList.toggle('hide', !inRoom);
+  if (!inRoom) return;
+  $('#roomCode').textContent = NET.code;
+  $('#roomRole').textContent = NET.mode === 'host' ? '部屋コード（あなたが部屋を作りました）' : '部屋コード';
+  $('#people').innerHTML = Object.entries(S.people).map(([pid, p]) =>
+    `<span class="chip person" style="${p.on === false ? 'opacity:.5' : ''}"><span class="dot" style="background:${esc(p.color)}"></span><span>${esc(p.name)}${pid === myPid ? '（あなた）' : ''}${p.on === false ? '（離脱）' : ''}</span>${NET.mode === 'host' && pid !== myPid && p.on === false ? `<b data-kick="${esc(pid)}">×</b>` : ''}</span>`).join('');
+}
+function renderPicks() {
+  const me = S.people[myPid];
+  $('#myDot').style.background = me ? me.color : COLORS[0];
+  const mine = me ? me.artists : [];
+  $('#myPicks').innerHTML = mine.length ? mine.map(a =>
+    `<span class="chip"><img src="${esc(a.img)}" alt=""><span>${esc(a.name)}</span><b data-del="${a.id}">×</b></span>`).join('')
+    : '<div class="empty">上の検索から選んでね</div>';
+  const others = Object.entries(S.people).filter(([pid, p]) => pid !== myPid && p.artists.length);
+  $('#others').innerHTML = others.map(([, p]) =>
+    `<div class="person-block"><div class="who"><span class="dot" style="background:${esc(p.color)}"></span>${esc(p.name)}</div><div class="chips">${p.artists.map(a => `<span class="chip" style="padding-right:10px"><img src="${esc(a.img)}" alt=""><span>${esc(a.name)}</span></span>`).join('')}</div></div>`).join('');
+  markResults();
+}
+const MODE_NOTE = {
+  top: '各アーティストの人気ランキング上位から順に選びます（毎回ほぼ同じ曲）',
+  toprand: '人気曲の上位から毎回ちがう曲をランダムに選びます',
+  rand: 'アルバム・シングル全部からランダムに選びます（隠れた名曲も）',
+  mix: '半分は人気曲、半分は全曲からランダムに選びます'
+};
+function renderSettings() {
+  const s = S.settings;
+  $('#nVal').textContent = s.n + '曲';
+  for (const b of $('#modeSeg').children) b.classList.toggle('on', b.dataset.v === s.mode);
+  for (const b of $('#orderSeg').children) b.classList.toggle('on', b.dataset.v === s.order);
+  $('#modeNote').textContent = MODE_NOTE[s.mode];
+}
+function renderGen() {
+  const cnt = Object.values(S.people).reduce((s, p) => s + p.artists.length, 0);
+  const b = $('#btnGen');
+  b.disabled = !!S.busy || !cnt || (NET.mode === 'guest' && !(NET.host && NET.host.open));
+  b.textContent = S.busy === 'gen' ? '曲を集めています…' : cnt ? `プレイリストを作る（約${cnt * S.settings.n}曲）` : 'プレイリストを作る';
+  renderProg();
+}
+function renderProg() {
+  const p = $('#genProg');
+  p.classList.toggle('hide', S.busy !== 'gen');
+  p.firstElementChild.style.width = Math.round((S.prog || 0) * 100) + '%';
+}
+function renderResult() {
+  const has = S.list.length > 0;
+  $('#resultCard').classList.toggle('hide', !has);
+  if (!has) return;
+  const ti = $('#plTitle'); if (document.activeElement !== ti) ti.value = S.title || '';
+  const sec = S.list.reduce((s, t) => s + (t.dur || 0), 0);
+  $('#listInfo').textContent = `${S.list.length}曲・約${Math.round(sec / 60)}分`;
+  renderTracks();
+  $('#savedList').innerHTML = S.saved.map(s => `<div class="sub" style="margin-top:6px">${esc(s.by)}さんが保存（${s.n}曲${s.pub ? '' : '・非公開'}）：<a href="${esc(s.url)}" target="_blank" rel="noopener">Spotifyで開く</a></div>`).join('');
+  renderSaveBtn();
+}
+const PLAY = '<svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg>', STOP = '<svg viewBox="0 0 10 10"><path d="M2 1h2.3v8H2zM5.7 1H8v8H5.7z"/></svg>';
+function renderTracks() {
+  $('#tracks').innerHTML = S.list.map((t, i) => {
+    const p = S.people[t.by]; const col = p ? p.color : '#555';
+    return `<div class="tr"><span class="no">${i + 1}</span><span class="bar" style="background:${esc(col)}"></span><img src="${esc(t.img)}" alt="" loading="lazy"><div class="nm"><div>${esc(t.t)}</div><div class="a">${esc(t.a)}${p && Object.keys(S.people).length > 1 ? `<span class="badge">${esc(p.name)}</span>` : ''}</div></div><button class="ib play ${playingU === t.u ? 'on' : ''}" data-play="${esc(t.u)}" title="試聴">${playingU === t.u ? STOP : PLAY}</button><button class="ib" data-rm="${esc(t.u)}" title="外す">✕</button></div>`;
+  }).join('');
+}
+function renderSaveBtn() {
+  const b = $('#btnSave');
+  b.disabled = saving || !S.list.length;
+  b.textContent = saving ? '保存中…' : getTok() ? 'Spotifyに保存' : 'Spotifyにログインして保存';
+}
+
+// 検索
+let searchT = 0, lastResults = [], searchSeq = 0;
+$('#q').addEventListener('input', () => {
+  clearTimeout(searchT);
+  const q = $('#q').value.trim();
+  if (!q) { $('#results').innerHTML = ''; lastResults = []; return; }
+  searchT = setTimeout(async () => {
+    const seq = ++searchSeq;
+    try {
+      const d = await dz('search/artist?limit=10&q=' + encodeURIComponent(q));
+      if (seq !== searchSeq) return;
+      // 名前が近い順 → ファンが多い順。同名は一番大きいものだけ
+      // 日本語名どおりでもファンが極端に少ない重複アカウントは後ろへ
+      const maxFan = Math.max(1, ...(d.data || []).map(a => a.nb_fan || 0));
+      const nq = normT(q), score = a => {
+        if ((a.nb_fan || 0) < maxFan * 0.05 || (a.nb_album || 0) < 8) return 0;
+        const n = normT(a.name); return n === nq ? 3 : (n.startsWith(nq) || nq.startsWith(n)) ? 2 : n.includes(nq) ? 1 : 0;
+      };
+      const byName = new Map();
+      for (const a of (d.data || [])) { const k = normT(a.name); const o = byName.get(k); if (!o || (a.nb_fan || 0) > (o.nb_fan || 0)) byName.set(k, a); }
+      lastResults = [...byName.values()].filter(a => a.nb_fan > 0 || byName.size < 3)
+        .sort((x, y) => (score(y) - score(x)) || ((y.nb_fan || 0) - (x.nb_fan || 0)));
+      $('#results').innerHTML = lastResults.length ? lastResults.map(a =>
+        `<div class="ritem" data-pick="${a.id}"><img src="${esc(a.picture_small)}" alt="" loading="lazy"><div class="nm"><div>${esc(a.name)}</div><div class="sub">ファン ${fmtFans(a.nb_fan)}・${a.nb_album || 0}作品</div></div><span class="add"></span></div>`).join('')
+        : '<div class="empty">見つかりませんでした。英語表記でも試してみてね</div>';
+      markResults();
+    } catch (e) { if (seq === searchSeq) $('#results').innerHTML = '<div class="empty">検索できませんでした。通信を確認してね</div>'; }
+  }, 350);
+});
+function markResults() {
+  const mine = new Set(((S.people[myPid] || {}).artists || []).map(a => a.id));
+  for (const el of document.querySelectorAll('[data-pick]')) {
+    const got = mine.has(+el.dataset.pick);
+    el.classList.toggle('got', got);
+    el.querySelector('.add').textContent = got ? '✓ 選択中' : '＋ 追加';
+  }
+}
+
+// クリック
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-pick],[data-del],[data-play],[data-rm],[data-kick]');
+  if (!t) return;
+  if (t.dataset.pick) {
+    const a = lastResults.find(x => x.id === +t.dataset.pick); if (!a) return;
+    const mine = ((S.people[myPid] || {}).artists || []);
+    if (mine.some(x => x.id === a.id)) act({ t: 'del', id: a.id });
+    else act({ t: 'add', a: { id: a.id, name: a.name, img: a.picture_medium || a.picture_small } });
+  } else if (t.dataset.del) act({ t: 'del', id: +t.dataset.del });
+  else if (t.dataset.play) { const tr = S.list.find(x => x.u === t.dataset.play); if (tr) togglePlay(tr); }
+  else if (t.dataset.rm) { if (playingU === t.dataset.rm) { audio.pause(); playingU = ''; } act({ t: 'rm', u: t.dataset.rm }); }
+  else if (t.dataset.kick) act({ t: 'kick', pid: t.dataset.kick });
+});
+$('#nMinus').onclick = () => act({ t: 'set', k: 'n', v: S.settings.n - 1 });
+$('#nPlus').onclick = () => act({ t: 'set', k: 'n', v: S.settings.n + 1 });
+$('#modeSeg').onclick = e => { const b = e.target.closest('button'); if (b) act({ t: 'set', k: 'mode', v: b.dataset.v }); };
+$('#orderSeg').onclick = e => { const b = e.target.closest('button'); if (b) act({ t: 'set', k: 'order', v: b.dataset.v }); };
+$('#btnGen').onclick = () => act({ t: 'gen' });
+$('#btnRegen').onclick = () => act({ t: 'gen' });
+$('#btnShuf').onclick = () => act({ t: 'shuf', force: true });
+$('#plTitle').addEventListener('change', () => act({ t: 'title', v: $('#plTitle').value }));
+$('#btnSave').onclick = () => saveToSpotify();
+$('#btnCopy').onclick = async () => {
+  const txt = (S.title ? S.title + '\n' : '') + S.list.map((t, i) => `${i + 1}. ${t.t} - ${t.a}`).join('\n');
+  try { await navigator.clipboard.writeText(txt); toast('曲リストをコピーしました'); }
+  catch (e) { prompt('コピーしてね', txt); }
+};
+$('#authPill').onclick = () => {
+  if (getTok()) { if (confirm('Spotifyからログアウトしますか？')) { setTok(null); renderAuth(); renderSaveBtn(); } }
+  else spLogin();
+};
+$('#btnHost').onclick = () => startHost();
+$('#btnJoin').onclick = () => {
+  const c = $('#joinCode').value.replace(/\D/g, '');
+  if (c.length !== 4) { toast('4けたのコードを入れてね'); return; }
+  startGuest(c, true);
+};
+$('#joinCode').addEventListener('keydown', e => { if (e.key === 'Enter') $('#btnJoin').click(); });
+$('#btnLeave').onclick = () => { if (confirm('部屋を出ますか？' + (NET.mode === 'host' ? '（部屋が閉じます）' : ''))) leaveRoom(); };
+$('#btnShare').onclick = async () => {
+  const url = redirectUri() + '?room=' + NET.code;
+  const text = `ミックスリストでいっしょにプレイリスト作ろう！ コード ${NET.code}`;
+  try { if (navigator.share) { await navigator.share({ title: 'ミックスリスト', text, url }); return; } } catch (e) { return; }
+  try { await navigator.clipboard.writeText(url); toast('招待リンクをコピーしました'); } catch (e) { prompt('招待リンク', url); }
+};
+$('#plPub').checked = LS.get('spmix-pub', true);
+$('#plPub').onchange = () => LS.set('spmix-pub', $('#plPub').checked);
+$('#myName').value = myName;
+$('#myName').addEventListener('change', () => {
+  myName = $('#myName').value.trim().slice(0, 12); LS.set('spmix-name', myName);
+  act({ t: 'name', name: myName || 'あなた' });
+});
+// Client ID 入力
+function openCid() { $('#cidRedir').textContent = redirectUri(); $('#cidInput').value = LS.get('spmix-cid', ''); $('#cidModal').classList.remove('hide'); }
+$('#cidCancel').onclick = () => $('#cidModal').classList.add('hide');
+$('#cidOk').onclick = () => { LS.set('spmix-cid', $('#cidInput').value.trim()); $('#cidModal').classList.add('hide'); if ($('#cidInput').value.trim()) spLogin(); };
+// 別タブでログインが終わったら
+window.addEventListener('storage', e => {
+  if (e.key === 'spmix-tok' || e.key === 'spmix-tok-mock') { renderAuth(); renderSaveBtn(); if (getTok() && pendingSave) { pendingSave = false; toast('ログインできました'); saveToSpotify(); } }
+});
+
+// ===== 起動 =====
+(async function boot() {
+  if (await handleCallback()) return;
+  loadSolo();
+  const roomQ = new URLSearchParams(location.search).get('room');
+  const host = SS.get('spmix-host', null), guest = SS.get('spmix-guest', null);
+  if (host && host.state) {
+    Object.assign(S, host.state); S.busy = ''; for (const p of Object.values(S.people)) p.on = false; ensureMe();
+    startHost(host.code);
+  } else if (roomQ && /^\d{4}$/.test(roomQ)) {
+    history.replaceState(null, '', redirectUri() + (MOCK ? '?mock=1' : ''));
+    startGuest(roomQ, true);
+  } else if (guest && guest.code) startGuest(guest.code, false);
+  renderAuth(); render();
+  if (!MOCK) prepPkce();
+  if (resumeSave && NET.mode !== 'guest') { resumeSave = false; setTimeout(saveToSpotify, 500); }
+  window.__mix = { S, NET, act, generate, saveToSpotify, picksFor };
+})();
+</script>
+</body>
+</html>
